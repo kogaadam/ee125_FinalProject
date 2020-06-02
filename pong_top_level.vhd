@@ -20,19 +20,20 @@ entity vga_pong is
 		BLANKn, SYNCn: out std_logic);
 end entity;
 
-architecture pong_top_level of vga_pong is
+architecture structural of vga_pong is
 	signal Hactive, Vactive, dena: std_logic;
+	signal Hsync_sig, Vsync_sig: std_logic;
 
-	component control_generator is
-		generic(
-			H_LOW: natural;
-			HBP: natural;
-			H_HIGH: natural;
-			HFP: natural;
-			V_LOW: natural;
-			VBP: natural;
-			V_HIGH: natural;
-			VFP: natural);
+	component pong_control_gen is
+		--generic(
+			--H_LOW: natural;
+			--HBP: natural;
+			--H_HIGH: natural;
+			--HFP: natural;
+			--V_LOW: natural;
+			--VBP: natural;
+			--V_HIGH: natural;
+			--VFP: natural);
 		port (
 			sys_clk: in std_logic;
 			vga_clk: out std_logic;
@@ -41,10 +42,10 @@ architecture pong_top_level of vga_pong is
 			blank_n, sync_n: out std_logic);
 	end component;
 	
-	component image_generator is
-		generic(
-			H_HIGH: natural;
-			V_HIGH: natural);
+	component pong_image_gen is
+		--generic(
+			--H_HIGH: natural;
+			--V_HIGH: natural);
 		port (
 			h_sync, v_sync: in std_logic;
 			h_active, v_active, d_ena: in std_logic;
@@ -55,11 +56,11 @@ architecture pong_top_level of vga_pong is
 begin
 
 	control_gen: pong_control_gen
-		generic map (H_LOW, HBP, H_HIGH, HFP, V_LOW, VBP, V_HIGH, VFP)
+		--generic map (H_LOW, HBP, H_HIGH, HFP, V_LOW, VBP, V_HIGH, VFP)
 		port map (clk, clk_vga, Hactive, Vactive, dena, Hsync, Vsync, BLANKn, SYNCn);
 	
 	image_gen: pong_image_gen
-		generic map (H_HIGH, V_HIGH)
-		port map (Hsync, Vsync, Hactive, Vactive, dena, R_switch, G_switch, B_switch, R, G, B);
+		--generic map (H_HIGH, V_HIGH)
+		port map (Hsync_sig, Vsync_sig, Hactive, Vactive, dena, R_switch, G_switch, B_switch, R, G, B);
 
 end architecture;
