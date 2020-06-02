@@ -51,3 +51,15 @@ architecture pong_top_level of vga_pong is
 			r_switch, g_switch, b_switch: in std_logic;
 			r, g, b: out std_logic_vector(3 downto 0));
 	end component;
+	
+begin
+
+	control_gen: pong_control_gen
+		generic map (H_LOW, HBP, H_HIGH, HFP, V_LOW, VBP, V_HIGH, VFP)
+		port map (clk, clk_vga, Hactive, Vactive, dena, Hsync, Vsync, BLANKn, SYNCn);
+	
+	image_gen: pong_image_gen
+		generic map (H_HIGH, V_HIGH)
+		port map (Hsync, Vsync, Hactive, Vactive, dena, R_switch, G_switch, B_switch, R, G, B);
+
+end architecture;
