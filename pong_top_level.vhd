@@ -1,7 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity pong_top_level is
+entity vga_pong is
 
 	generic (
 		H_LOW: natural := 96;
@@ -15,12 +15,13 @@ entity pong_top_level is
 		
 	port (
 		clk: in std_logic;
+		left_button, right_button: in std_logic;
 		Hsync, Vsync: out std_logic;
 		R, G, B: out std_logic_vector(3 downto 0));
 		
 end entity;
 
-architecture structural of pong_top_level is
+architecture structural of vga_pong is
 	
 	-- intermediates
 	signal clk_vga, dena, Hactive, Vactive, Hsync_mirror: std_logic;
@@ -44,9 +45,11 @@ architecture structural of pong_top_level is
 	-- image gen component declaration
 	component pong_image_gen is
 		generic (
+			H_HIGH: natural;
 			V_HIGH: natural);
 		port (
-			clk_vga, Vactive, dena, Hsync: in std_logic;
+			clk_vga, Hactive, Vactive, dena, Hsync: in std_logic;
+			left_button, right_button: in std_logic;
 			R, G, B: out std_logic_vector(3 downto 0));
 	end component;
 			
@@ -61,7 +64,7 @@ begin
 	
 	-- image gen component instantiation
 	image_gen: pong_image_gen
-		generic map (V_HIGH)
-		port map (clk_vga, Vactive, dena, Hsync_mirror, R, G, B);
+		generic map (H_HIGH, V_HIGH)
+		port map (clk_vga, Hactive, Vactive, dena, Hsync_mirror, left_button, right_button, R, G, B);
 	
 end architecture;
