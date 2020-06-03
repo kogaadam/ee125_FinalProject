@@ -3,70 +3,65 @@ use ieee.std_logic_1164.all;
 
 entity pong_control_gen is
 	generic(
-		H_LOW: natural := 96;
-		HBP: natural := 48;
-		H_HIGH: natural := 640;
-		HFP: natural := 16;
-		V_LOW: natural := 2;
-		VBP: natural := 33;
-		V_HIGH: natural := 480;
-		VFP: natural := 10);
+		H_LOW: natural;
+		HBP: natural;
+		H_HIGH: natural;
+		HFP: natural;
+		V_LOW: natural;
+		VBP: natural;
+		V_HIGH: natural;
+		VFP: natural);
 	port (
 		sys_clk: in std_logic;
-		vga_clk: out std_logic;
 		h_active, v_active, d_ena: out std_logic;
-		h_sync, v_sync: out std_logic;
-		blank_n, sync_n: out std_logic);
+		h_sync, v_sync: out std_logic);
 end entity;
 
 architecture structural of pong_control_gen is
-	signal vga_clk_sig: std_logic;
+	signal clk_vga, Hsync_sig, Vsync_sig: std_logic;
 begin
-
-	blank_n <= '1';
-	sync_n <= '0';
 	
 	-- Create VGA clock (50MHz -> 25 MHz)
 	process (sys_clk)
 	begin
 		if rising_edge(sys_clk) then
-			vga_clk_sig <= not vga_clk_sig;
+			clk_vga <= not clk_vga;
 		end if;
 	end process;
 	
 	-- Create horizontal signals
-	process(vga_clk_sig)
+	process(clk_vga)
 		variable Hcount: natural range 0 to H_LOW + HBP + H_HIGH + HFP;
 	begin
-		if rising_edge(vga_clk_sig) then
+		if rising_edge(clk_vga) then
 			Hcount := Hcount + 1;
 			if Hcount = H_LOW then
-				h_sync <= '1';
+				Hsync_sig <= '1';
 			elsif Hcount = H_LOW + HBP then
 				h_active <= '1';
 			elsif Hcount = H_LOW + HBP + H_HIGH then
 				h_active <= '0';
 			elsif Hcount = H_LOW + HBP + H_HIGH + HFP then
-				h_sync <= '0';
+				Hsync_sig <= '0';
 				Hcount := 0;
 			end if;
 		end if;
 	end process;
 
 	-- Create horizontal signals
-	process(vga_clk_sig)
+	process(Hsync_sig)
 		variable Vcount: natural range 0 to V_LOW + VBP + V_HIGH + VFP;
 	begin
-		if rising_edge(vga_clk_sig) then
+		if rising_edge(Hsync_sig) then
 			Vcount := Vcount + 1;
 			if Vcount = V_LOW then
-				V_sync <= '1';
+				Vsync_sig <= '1';
 			elsif Vcount = V_LOW + VBP then
-				V_active <= '1';
+				v_active <= '1';
 			elsif Vcount = V_LOW + VBP + V_HIGH then
-				V_active <= '0';
+				v_active <= '0';
 			elsif Vcount = V_LOW + VBP + V_HIGH + VFP then
-				V_sync <= '0';
+				Vsync_sig <= '0';
 				Vcount := 0;
 			end if;
 		end if;
@@ -74,6 +69,7 @@ begin
 	
 	-- Enable display
 	d_ena <= h_active and v_active;
-	vga_clk <= vga_clk_sig;
-
+	h_sync <= Hsync_sig;
+	v_sync <= Vsync_sig;
+	
 end architecture;

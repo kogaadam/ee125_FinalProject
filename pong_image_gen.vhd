@@ -3,8 +3,8 @@ use ieee.std_logic_1164.all;
 
 entity pong_image_gen is
 	generic(
-		H_HIGH: natural := 640;
-		V_HIGH: natural := 480);
+		H_HIGH: natural;
+		V_HIGH: natural);
 	port (
 		h_sync, v_sync: in std_logic;
 		h_active, v_active, d_ena: in std_logic;
@@ -28,24 +28,15 @@ begin
 		end if;
 		
 		if d_ena then
-			case line_count is
-				when 0 =>
-					r <= (others => '1');
-					g <= (others => '0');
-					b <= (others => '0');
-				when 1 | 2 | 479 =>
-					r <= (others => '0');
-					g <= (others => '1');
-					b <= (others => '0');
-				when 3 to 5 =>
-					r <= (others => '0');
-					g <= (others => '0');
-					b <= (others => '1');
-				when others =>
-					r <= (others => r_switch);
-					g <= (others => g_switch);
-					b <= (others => b_switch);
-			end case;
+			if line_count < 240 then
+				r <= (others => '0');
+				g <= (others => '0');
+				b <= (others => '1');
+			else
+				r <= (others => '0');
+				g <= (others => '1');
+				b <= (others => '0');
+			end if;
 		else
 			r <= (others => '0');
 			g <= (others => '0');
