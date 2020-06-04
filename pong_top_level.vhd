@@ -14,7 +14,7 @@ entity vga_pong is
 		VFP: natural := 10);
 		
 	port (
-		clk: in std_logic;
+		clk, rst: in std_logic;
 		left_button, right_button: in std_logic;
 		Hsync, Vsync: out std_logic;
 		R, G, B: out std_logic_vector(3 downto 0));
@@ -48,7 +48,7 @@ architecture structural of vga_pong is
 			H_HIGH: natural;
 			V_HIGH: natural);
 		port (
-			clk_vga, Hactive, Vactive, dena, Hsync: in std_logic;
+			clk_vga, rst, Hactive, Vactive, dena, Hsync: in std_logic;
 			left_button, right_button: in std_logic;
 			R, G, B: out std_logic_vector(3 downto 0));
 	end component;
@@ -65,6 +65,6 @@ begin
 	-- image gen component instantiation
 	image_gen: pong_image_gen
 		generic map (H_HIGH, V_HIGH)
-		port map (clk_vga, Hactive, Vactive, dena, Hsync_mirror, left_button, right_button, R, G, B);
+		port map (clk_vga, rst, Hactive, Vactive, dena, Hsync_mirror, left_button, right_button, R, G, B);
 	
 end architecture;
