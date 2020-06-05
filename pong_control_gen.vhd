@@ -3,25 +3,29 @@ use ieee.std_logic_1164.all;
 
 entity pong_control_gen is
 	generic (
-		H_LOW: natural;
-		HBP: natural;
-		H_HIGH: natural;
-		HFP: natural;
-		V_LOW: natural;
-		VBP: natural;
-		V_HIGH: natural;
-		VFP: natural);
+		H_LOW: natural;  --time for how long Hsync is low
+		HBP: natural;	  --horizontal back porch
+		H_HIGH: natural; --active horizontal display interval
+		HFP: natural;	  --horizontal front porch
+		V_LOW: natural;  --time for long how Vsync is low
+		VBP: natural;	  --vertical back porch
+		V_HIGH: natural; --active vertical display interval
+		VFP: natural);   --vertical front porch
 	port (
-		clk: in std_logic;
-		clk_vga, Hsync, Vsync, dena, Hactive, Vactive: out std_logic);
+		clk: in std_logic;		 --internal 50 MHz clock
+		clk_vga, 					 --how often each VGA display pixel updates
+		Hsync, 						 --determines when a new line should start
+		Vsync, 						 --determines when a new frame should start
+		dena, 						 --enable RGB output
+		Hactive, 					 --indicates active horizontal display
+		Vactive: out std_logic); --indicates active vertical display
 end entity;
 
 
-	
 architecture structural of pong_control_gen is
 
-	signal clk_vga_mirror: std_logic;
-	signal Hsync_mirror: std_logic;
+	signal clk_vga_mirror: std_logic; --signal to mirror vga clock output
+	signal Hsync_mirror: std_logic;	 --signal to mirror Hsync output
 	
 begin
 	
@@ -74,7 +78,8 @@ begin
 		end if;
 	end process;
 	
-	dena <= Hactive and Vactive;
+	dena <= Hactive and Vactive; --Only output to the screen when in both
+										  --    active intervals
 
 end architecture;
 	

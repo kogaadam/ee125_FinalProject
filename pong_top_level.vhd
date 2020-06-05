@@ -1,5 +1,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use work.subprograms_pkg.all;
 
 entity vga_pong is
 
@@ -17,6 +18,7 @@ entity vga_pong is
 		clk, rst: in std_logic;
 		left_button, right_button: in std_logic;
 		Hsync, Vsync: out std_logic;
+		ssd2, ssd1, ssd0: out std_logic_vector(6 downto 0);
 		R, G, B: out std_logic_vector(3 downto 0));
 		
 end entity;
@@ -50,6 +52,7 @@ architecture structural of vga_pong is
 		port (
 			clk_vga, rst, Hactive, Vactive, dena, Hsync: in std_logic;
 			left_button, right_button: in std_logic;
+			ssd2, ssd1, ssd0: out std_logic_vector(6 downto 0);
 			R, G, B: out std_logic_vector(3 downto 0));
 	end component;
 			
@@ -65,6 +68,7 @@ begin
 	-- image gen component instantiation
 	image_gen: pong_image_gen
 		generic map (H_HIGH, V_HIGH)
-		port map (clk_vga, rst, Hactive, Vactive, dena, Hsync_mirror, left_button, right_button, R, G, B);
+		port map (clk_vga, rst, Hactive, Vactive, dena, Hsync_mirror, left_button, right_button, 
+					 ssd2, ssd1, ssd0, R, G, B);
 	
 end architecture;
