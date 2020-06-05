@@ -24,7 +24,7 @@ architecture structural of pong_image_gen is
 	signal angle: natural := 45;
 	signal speed: natural;
 	
-	signal address: std_logic_vector(12 downto 0);
+	signal address: std_logic_vector(16 downto 0);
 	signal intensity: std_logic_vector(11 downto 0);
 	
 	--type type_2D is array (639 downto 0, 479 downto 0) of std_logic_vector(11 downto 0);
@@ -34,13 +34,13 @@ begin
 
 	myrom: lpm_rom
 		generic map (
-			lpm_widthad => 13, --address width
+			lpm_widthad => 17, --address width
 			lpm_outdata => "UNREGISTERED",
 			lpm_address_control => "REGISTERED",
-			lpm_file => "test.mif", --data file
+			lpm_file => "game_over.mif", --data file
 			lpm_width => 12) --data width
 		port map (
-			inclock=>NOT rect_clock_sig, address=>address, q=>intensity);
+			inclock=>NOT clk_vga, address=>address, q=>intensity);
 
 	process(clk_vga)
 		variable counter: natural;
@@ -180,11 +180,24 @@ begin
 			end if;
 
 		elsif dena and game_over then
-			--mif_count := line_count * col_count;
-			address <= std_logic_vector(to_unsigned(line_count,13));
-			R <= intensity(11 downto 8);
-			G <= intensity(7 downto 4);
-			B <= intensity(3 downto 0);
+			if line_count = 140 then
+				mif_count := col_count;
+			elsif line_count < 140 then
+				mif_count := 200000;
+			else
+				mif_count := ((line_count - 140) * 640) + col_count;
+			end if;
+			
+			if mif_count < 128000 then
+				address <= std_logic_vector(to_unsigned(mif_count,17));
+				B <= intensity(11 downto 8);
+				G <= intensity(7 downto 4);
+				R <= intensity(3 downto 0);
+			else
+				R <= (others => '0');
+				G <= (others => '0');
+				B <= (others => '0');
+			end if;
 	
 		else
 			R <= (others => '0');
