@@ -68,7 +68,7 @@ begin
 	-- image gen component instantiation
 	image_gen: pong_image_gen
 		generic map (H_HIGH, V_HIGH)
-		port map (clk_vga, rst, Hactive, Vactive, dena, Hsync_mirror, left_button, right_button, 
-					 ssd2, ssd1, ssd0, R, G, B);
+		port map (clk_vga, rst, Hactive, Vactive, dena, Hsync_mirror,
+					 left_button, right_button, ssd2, ssd1, ssd0, R, G, B);
 	
 end architecture;

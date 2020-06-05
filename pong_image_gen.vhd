@@ -36,12 +36,12 @@ architecture structural of pong_image_gen is
 	constant SPEED_CHANGE: natural := 5000; --how much to increase the speed by
 	constant BALL_WIDTH: natural := 5; --technically the ball radius but distance to
 												  --    object for which a collision is determined
-	constant BAR_COLLISION_OFFSET: natural := 46; --number of pixels on either side of the
-																 --    bar center for which a collision
-																 --    is allowed
+	constant BAR_COLLISION_OFFSET: natural := 46; --number of pixels on either side of
+																 --    the bar center for which a
+																 --    collision is allowed
 	constant TOP_GAME_OVER_IMAGE: natural := 140; --top of game over image
-	constant GAME_OVER_IMAGE_PIXELS: natural := 128000; --number of pixels in the game over
-																		 --    image
+	constant GAME_OVER_IMAGE_PIXELS: natural := 128000; --number of pixels in the game
+																		 --    over image
 	constant ADDR_WIDTH: natural := 17; --width of image file line addresses
 	constant INTENSITY_WIDTH: natural := 4; --width of pixel values in image file
 
@@ -276,12 +276,13 @@ begin
 		-- Display is enabled and game is over so draw the game over image
 		elsif dena and game_over then
 			-- Set the appropriate address for the pixel location in the image file
-			-- The image we are displaying is shifted vertically to the middle of the screen
+			-- The image we are displaying is shifted vertically to the middle of the
+			--     screen
 			if line_count = TOP_GAME_OVER_IMAGE then
 				mif_count := col_count;
 			elsif line_count < TOP_GAME_OVER_IMAGE then
-				mif_count := GAME_OVER_IMAGE_PIXELS; -- Set an out of bounds value so nothing
-																 -- will be displayed
+				mif_count := GAME_OVER_IMAGE_PIXELS; -- Set an out of bounds value so
+																 -- nothing will be displayed
 			else
 				mif_count := ((line_count - TOP_GAME_OVER_IMAGE) * H_HIGH) + col_count;
 			end if;
